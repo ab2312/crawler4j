@@ -42,7 +42,8 @@ public class HostDirectives {
 
   public boolean allows(String path) {
     timeLastAccessed = System.currentTimeMillis();
-    return !disallows.containsPrefixOf(path) || allows.containsPrefixOf(path);
+    return true;
+//    return !disallows.containsPrefixOf(path) || allows.containsPrefixOf(path);
   }
 
   public void addDisallow(String path) {

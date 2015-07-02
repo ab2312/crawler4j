@@ -17,11 +17,15 @@
 
 package edu.uci.ics.crawler4j.examples.imagecrawler;
 
+import java.util.ArrayList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
+import edu.uci.ics.crawler4j.crawler.authentication.AuthInfo;
+import edu.uci.ics.crawler4j.crawler.authentication.FormAuthInfo;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
@@ -54,16 +58,28 @@ public class ImageCrawlController {
      * true to make sure they are included in the crawl.
      */
     config.setIncludeBinaryContentInCrawling(true);
+    
+    
+    ArrayList<AuthInfo> arrayList = new ArrayList<AuthInfo>();
+    arrayList.add(new FormAuthInfo("hsjab2312@hotmail.com", "the900", "http://www.pixiv.net/", "pixiv_id", "pass"));
+    config.setAuthInfos(arrayList);
 
-    String[] crawlDomains = {"http://uci.edu/"};
+//    String[] crawlDomains = {"http://bcy.net/illust","http://uci.edu/"};
+    
+   String[] crawlDomains = {
+		   "http://i3.pixiv.net/c/"
+		   };
+    
 
     PageFetcher pageFetcher = new PageFetcher(config);
     RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
     RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
     CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
-    for (String domain : crawlDomains) {
-      controller.addSeed(domain);
-    }
+    
+//    for (String domain : crawlDomains) {
+//      controller.addSeed(domain);
+//    }
+    controller.addSeed("http://www.pixiv.net/");
 
     ImageCrawler.configure(crawlDomains, storageFolder);
 

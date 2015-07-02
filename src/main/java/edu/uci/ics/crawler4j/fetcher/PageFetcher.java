@@ -28,29 +28,31 @@ import java.util.List;
 
 import javax.net.ssl.SSLContext;
 
-import edu.uci.ics.crawler4j.crawler.authentication.NtAuthInfo;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -66,6 +68,7 @@ import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.authentication.AuthInfo;
 import edu.uci.ics.crawler4j.crawler.authentication.BasicAuthInfo;
 import edu.uci.ics.crawler4j.crawler.authentication.FormAuthInfo;
+import edu.uci.ics.crawler4j.crawler.authentication.NtAuthInfo;
 import edu.uci.ics.crawler4j.crawler.exceptions.PageBiggerThanMaxSizeException;
 import edu.uci.ics.crawler4j.url.URLCanonicalizer;
 import edu.uci.ics.crawler4j.url.WebURL;
@@ -206,7 +209,9 @@ public class PageFetcher extends Configurable {
     try {
       UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formParams, "UTF-8");
       httpPost.setEntity(entity);
-      httpClient.execute(httpPost);
+      
+      CloseableHttpResponse execute = httpClient.execute(httpPost);     
+      
       logger.debug("Successfully Logged in with user: " + authInfo.getUsername() + " to: " + authInfo.getHost());
     } catch (UnsupportedEncodingException e) {
       logger.error("Encountered a non supported encoding while trying to login to: " + authInfo.getHost(), e);
@@ -225,6 +230,14 @@ public class PageFetcher extends Configurable {
     HttpUriRequest request = null;
     try {
       request = newHttpUriRequest(toFetchURL);
+      
+      // make like a real brower
+      request.addHeader("max-age",String.valueOf(Integer.MAX_VALUE));
+      request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+      request.setHeader("Referer","http://www.pixiv.net/");
+      request.addHeader("Accept-Encoding", "gzip,deflate,sdch");
+      request.addHeader("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6,es;q=0.4");
+      request.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36");
       // Applying Politeness delay
       synchronized (mutex) {
         long now = (new Date()).getTime();
