@@ -61,13 +61,14 @@ public class ImageCrawlController {
     
     
     ArrayList<AuthInfo> arrayList = new ArrayList<AuthInfo>();
-    arrayList.add(new FormAuthInfo("hsjab2312@hotmail.com", "the900", "http://www.pixiv.net/", "pixiv_id", "pass"));
+    arrayList.add(new FormAuthInfo("hsjab2312@hotmail.com", "XXXX", "http://www.pixiv.net/", "pixiv_id", "pass"));
     config.setAuthInfos(arrayList);
 
 //    String[] crawlDomains = {"http://bcy.net/illust","http://uci.edu/"};
     
    String[] crawlDomains = {
-		   "http://i3.pixiv.net/c/"
+		   "http://i3.pixiv.net/c/",
+		   "http://www.pixiv.net/"
 		   };
     
 
@@ -79,7 +80,7 @@ public class ImageCrawlController {
 //    for (String domain : crawlDomains) {
 //      controller.addSeed(domain);
 //    }
-    controller.addSeed("http://www.pixiv.net/");
+    controller.addSeed("http://www.pixiv.net/new_illust.php");
 
     ImageCrawler.configure(crawlDomains, storageFolder);
 
