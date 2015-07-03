@@ -24,7 +24,9 @@ import java.net.UnknownHostException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 
@@ -36,7 +38,6 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.CookieStore;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
@@ -45,14 +46,12 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
-import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -60,6 +59,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContexts;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -205,12 +205,26 @@ public class PageFetcher extends Configurable {
     List<NameValuePair> formParams = new ArrayList<>();
     formParams.add(new BasicNameValuePair(authInfo.getUsernameFormStr(), authInfo.getUsername()));
     formParams.add(new BasicNameValuePair(authInfo.getPasswordFormStr(), authInfo.getPassword()));
+    if(authInfo.getOtherparam()!=null){
+    	for (Iterator iterator = authInfo.getOtherparam().entrySet().iterator(); iterator.hasNext();) {
+			Map.Entry<String,String> entry = (Map.Entry<String,String>) iterator.next();
+			  formParams.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));			
+		}  
+    }
 
+    httpPost.addHeader("max-age",String.valueOf(Integer.MAX_VALUE));
+    httpPost.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+    httpPost.setHeader("Referer","http://www.pixiv.net/");
+    httpPost.addHeader("Accept-Encoding", "gzip,deflate,sdch");
+    httpPost.addHeader("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6,es;q=0.4");
+    httpPost.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36");
     try {
       UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formParams, "UTF-8");
       httpPost.setEntity(entity);
       
-      CloseableHttpResponse execute = httpClient.execute(httpPost);     
+      CloseableHttpResponse response = httpClient.execute(httpPost);
+      response.getStatusLine().getStatusCode();
+      System.out.println( EntityUtils.toString(response.getEntity())) ;
       
       logger.debug("Successfully Logged in with user: " + authInfo.getUsername() + " to: " + authInfo.getHost());
     } catch (UnsupportedEncodingException e) {

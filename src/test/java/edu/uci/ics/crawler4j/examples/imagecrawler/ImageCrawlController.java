@@ -18,7 +18,9 @@
 package edu.uci.ics.crawler4j.examples.imagecrawler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,13 +63,20 @@ public class ImageCrawlController {
     
     
     ArrayList<AuthInfo> arrayList = new ArrayList<AuthInfo>();
-    arrayList.add(new FormAuthInfo("hsjab2312@hotmail.com", "XXXX", "http://www.pixiv.net/", "pixiv_id", "pass"));
+    HashMap hashMap = new HashMap();
+    hashMap.put("mode", "login");
+    hashMap.put("return_to", "http://www.pixiv.net/");
+    hashMap.put("skip", "1");
+    arrayList.add(new FormAuthInfo("hsjab2312@hotmail.com", "XXXX", "https://www.secure.pixiv.net/login.php", "pixiv_id", "pass",hashMap));
     config.setAuthInfos(arrayList);
 
 //    String[] crawlDomains = {"http://bcy.net/illust","http://uci.edu/"};
     
    String[] crawlDomains = {
-		   "http://i3.pixiv.net/c/",
+		   "http://i1.pixiv.net/",
+		   "http://i2.pixiv.net/",
+		   "http://i3.pixiv.net/",
+		   "http://i4.pixiv.net/",
 		   "http://www.pixiv.net/"
 		   };
     
@@ -80,7 +89,7 @@ public class ImageCrawlController {
 //    for (String domain : crawlDomains) {
 //      controller.addSeed(domain);
 //    }
-    controller.addSeed("http://www.pixiv.net/new_illust.php");
+    controller.addSeed("http://www.pixiv.net/member_illust.php?mode=medium&illust_id=51160511");
 
     ImageCrawler.configure(crawlDomains, storageFolder);
 

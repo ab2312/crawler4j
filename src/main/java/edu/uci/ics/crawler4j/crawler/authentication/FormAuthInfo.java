@@ -1,6 +1,7 @@
 package edu.uci.ics.crawler4j.crawler.authentication;
 
 import java.net.MalformedURLException;
+import java.util.Map;
 
 import javax.swing.text.html.FormSubmitEvent.MethodType;
 
@@ -16,6 +17,7 @@ public class FormAuthInfo extends AuthInfo {
 
   private String usernameFormStr;
   private String passwordFormStr;
+  private Map<String, String> otherparam;
 
   /**
    * Constructor
@@ -28,15 +30,31 @@ public class FormAuthInfo extends AuthInfo {
    *
    * @throws MalformedURLException Make sure your URL is valid
    */
-  public FormAuthInfo(String username, String password, String loginUrl, String usernameFormStr, String passwordFormStr)
+  public FormAuthInfo(String username, String password, String loginUrl, String usernameFormStr, String passwordFormStr,Map<String,String>... others)
       throws MalformedURLException {
     super(AuthenticationType.FORM_AUTHENTICATION, MethodType.POST, loginUrl, username, password);
 
     this.usernameFormStr = usernameFormStr;
     this.passwordFormStr = passwordFormStr;
+    if(others!=null && others.length==1)
+    this.otherparam = others[0];
   }
 
   /**
+ * @return the otherparam
+ */
+public Map<String, String> getOtherparam() {
+	return otherparam;
+}
+
+/**
+ * @param otherparam the otherparam to set
+ */
+public void setOtherparam(Map<String, String> otherparam) {
+	this.otherparam = otherparam;
+}
+
+/**
    * @return username html "name" form attribute
    */
   public String getUsernameFormStr() {

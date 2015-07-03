@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import org.apache.poi.ss.formula.ptg.StringPtg;
+
 import com.google.common.io.Files;
 
 import edu.uci.ics.crawler4j.crawler.Page;
@@ -63,17 +65,29 @@ public class ImageCrawler extends WebCrawler {
     String href = url.getURL().toLowerCase();
     if (filters.matcher(href).matches()) {
       return false;
-    }
+    } 
+    
+   String[] picDomains = {
+    	"http://i4.pixiv.net/img-original"
+    };
 
     if (imgPatterns.matcher(href).matches()) {
-      return true;
+    	 for (String domain : picDomains) {
+    	        if (href.startsWith(domain)) {
+    	          return true;
+    	        }else{
+    	        	return false;
+    	        }
+    	 }
     }
-
+    
     for (String domain : crawlDomains) {
-      if (href.startsWith(domain)) {
-        return true;
+        if (href.startsWith(domain)) {
+          return true;       
+        }
       }
-    }
+
+    
     return false;
   }
 
