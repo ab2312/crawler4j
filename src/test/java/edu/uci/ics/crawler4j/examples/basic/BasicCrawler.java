@@ -17,10 +17,15 @@
 
 package edu.uci.ics.crawler4j.examples.basic;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.apache.http.Header;
+
+import com.google.common.io.Files;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
@@ -33,6 +38,7 @@ import edu.uci.ics.crawler4j.url.WebURL;
 public class BasicCrawler extends WebCrawler {
 
   private static final Pattern IMAGE_EXTENSIONS = Pattern.compile(".*\\.(bmp|gif|jpg|png)$");
+  private static File storageFolder;
 
   /**
    * You should implement this function to specify whether the given url
@@ -49,6 +55,14 @@ public class BasicCrawler extends WebCrawler {
     // Only accept the url if it is in the "www.ics.uci.edu" domain and protocol is "http".
     return href.startsWith("http://www.ics.uci.edu/");
   }
+  
+  public static void configure(String[] domain, String storageFolderName) {
+
+	    storageFolder = new File(storageFolderName);
+	    if (!storageFolder.exists()) {
+	      storageFolder.mkdirs();
+	    }
+	  }
 
   /**
    * This function is called when a page is fetched and ready to be processed
@@ -77,6 +91,21 @@ public class BasicCrawler extends WebCrawler {
       String text = htmlParseData.getText();
       String html = htmlParseData.getHtml();
       Set<WebURL> links = htmlParseData.getOutgoingUrls();
+      
+      // get a unique name for storing this image
+     // String extension = url.substring(url.lastIndexOf('.'));
+      String extension = ".html";
+      String hashedName = UUID.randomUUID() + extension;
+
+      // store image
+      String filename = storageFolder.getAbsolutePath() + "/" + hashedName;
+      try {
+        Files.write(page.getContentData(), new File(filename));
+        logger.info("Stored: {}", url);
+      } catch (IOException iox) {
+        logger.error("Failed to write file: " + filename, iox);
+      }
+      
 
       logger.debug("Text length: {}", text.length());
       logger.debug("Html length: {}", html.length());

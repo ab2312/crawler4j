@@ -72,13 +72,14 @@ public class ImageCrawler extends WebCrawler {
     };
 
     if (imgPatterns.matcher(href).matches()) {
-    	 for (String domain : picDomains) {
-    	        if (href.startsWith(domain)) {
-    	          return true;
-    	        }else{
-    	        	return false;
-    	        }
-    	 }
+//    	 for (String domain : picDomains) {
+//    	        if (href.startsWith(domain)) {
+//    	          return true;
+//    	        }else{
+//    	        	return false;
+//    	        }
+//    	 }
+    	return true;
     }
     
     for (String domain : crawlDomains) {
@@ -97,7 +98,7 @@ public class ImageCrawler extends WebCrawler {
 
     // We are only interested in processing images which are bigger than 10k
     if (!imgPatterns.matcher(url).matches() ||
-        !((page.getParseData() instanceof BinaryParseData) && (page.getContentData().length > (10 * 1024 )))) {
+        !((page.getParseData() instanceof BinaryParseData) && (page.getContentData().length > (50 * 1024 )))) {
       return;
     }
 

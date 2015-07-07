@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
+import edu.uci.ics.crawler4j.examples.imagecrawler.ImageCrawler;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
@@ -33,7 +34,7 @@ public class BasicCrawlController {
   private static final Logger logger = LoggerFactory.getLogger(BasicCrawlController.class);
 
   public static void main(String[] args) throws Exception {
-    if (args.length != 2) {
+    if (args.length != 3) {
       logger.info("Needed parameters: ");
       logger.info("\t rootFolder (it will contain intermediate crawl data)");
       logger.info("\t numberOfCralwers (number of concurrent threads)");
@@ -51,6 +52,7 @@ public class BasicCrawlController {
      * be initiated for crawling.
      */
     int numberOfCrawlers = Integer.parseInt(args[1]);
+    String storageFolder = args[2];
 
     CrawlConfig config = new CrawlConfig();
 
@@ -114,6 +116,9 @@ public class BasicCrawlController {
     controller.addSeed("http://www.ics.uci.edu/");
     controller.addSeed("http://www.ics.uci.edu/~lopes/");
     controller.addSeed("http://www.ics.uci.edu/~welling/");
+    
+    String[] crawlDomains={};
+    BasicCrawler.configure(crawlDomains, storageFolder);
 
     /*
      * Start the crawl. This is a blocking operation, meaning that your code

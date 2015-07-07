@@ -67,7 +67,7 @@ public class ImageCrawlController {
     hashMap.put("mode", "login");
     hashMap.put("return_to", "http://www.pixiv.net/");
     hashMap.put("skip", "1");
-    arrayList.add(new FormAuthInfo("hsjab2312@hotmail.com", "XXXX", "https://www.secure.pixiv.net/login.php", "pixiv_id", "pass",hashMap));
+    arrayList.add(new FormAuthInfo("hsjab2312@hotmail.com", "the900", "https://www.secure.pixiv.net/login.php", "pixiv_id", "pass",hashMap));
     config.setAuthInfos(arrayList);
 
 //    String[] crawlDomains = {"http://bcy.net/illust","http://uci.edu/"};
